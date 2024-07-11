@@ -12,11 +12,8 @@ This project is a simple application built with Flutter to perform CRUD operatio
 - **Read:** Fetch and display records from Firestore.
 - **Update:** Modify existing records in Firestore.
 - **Delete:** Remove records from Firestore.
+-**Continuous Updates:** I plan to improve this project, add new features and much more.
 
-**Continuous Spdates**
-
-I plan to improve this project, add new features and much more.
-  
 ## Getting Started
 
 Follow the instructions below to set up and run the project on your local machine.
@@ -61,12 +58,12 @@ Make sure you have the following installed:
    ```
    flutter run
    ```
-**Usage**
+## Usage
 -Add new items by entering text and pressing the "Add" button.
 -View the list of items fetched from Firestore.
 -Edit an item by clicking on it and making changes.
 -Delete an item by swiping it to the left.
 
-**Built With**
+## Built With
 -Flutter - The UI toolkit for building natively compiled applications.
 -Firebase Firestore - The database used for storing and syncing data.
