@@ -32,8 +32,8 @@ Make sure you have the following installed:
 1. **Clone the repository:**
 
    ```sh
-   git clone https://github.com/yourusername/firebase-practice-crud.git
-   cd firebase-practice-crud
+   git clone [https://github.com/yourusername/firebase-practice-crud.git](https://github.com/Akbarabi/Firebase-Practice-CRUD.git)
+   cd Firebase-Practice-CRUD
    
 2. **Install dependencies:**
    
