@@ -82,5 +82,5 @@ Thanks to the Flutter and Firebase teams for their awesome tools and documentati
 Inspiration and code samples from various open-source projects.
 
 ```
-eel free to modify or expand upon these sections as needed for your specific project.
+Feel free to modify or expand upon these sections as needed for your specific project.
 ```
