@@ -67,3 +67,20 @@ Make sure you have the following installed:
 ## Built With
 - Flutter - The UI toolkit for building natively compiled applications.
 - Firebase Firestore - The database used for storing and syncing data.
+
+## Contributing
+If you'd like to contribute to this project, please fork the repository and use a feature branch. Pull requests are warmly welcome.
+
+- Fork the repository
+- Create your feature branch (git checkout -b feature/feature-name)
+- Commit your changes (git commit -am 'Add some feature')
+- Push to the branch (git push origin feature/feature-name)
+- Create a new Pull Request
+
+## Acknowledgments
+Thanks to the Flutter and Firebase teams for their awesome tools and documentation.
+Inspiration and code samples from various open-source projects.
+
+```
+eel free to modify or expand upon these sections as needed for your specific project.
+```
