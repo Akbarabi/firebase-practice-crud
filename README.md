@@ -12,7 +12,7 @@ This project is a simple application built with Flutter to perform CRUD operatio
 - **Read:** Fetch and display records from Firestore.
 - **Update:** Modify existing records in Firestore.
 - **Delete:** Remove records from Firestore.
--**Continuous Updates:** I plan to improve this project, add new features and much more.
+- **Continuous Updates:** I plan to improve this project, add new features and much more.
 
 ## Getting Started
 
@@ -43,12 +43,12 @@ Make sure you have the following installed:
     
 3. **Configure Firebase:**
 
-   -Create a Firebase project in the Firebase Console.
-   -Add an Android and/or iOS app to your Firebase project.
-   -Download the `google-services.json` (for Android) and/or `GoogleService-Info.plist` (for iOS) and place them in the appropriate directories:
-     -`android/app for google-services.json`
-     -`ios/Runner for GoogleService-Info.plist`
-   -Ensure the Firebase project is properly configured by running:
+   - Create a Firebase project in the Firebase Console.
+   - Add an Android and/or iOS app to your Firebase project.
+   - Download the `google-services.json` (for Android) and/or `GoogleService-Info.plist` (for iOS) and place them in the appropriate directories:
+     - `android/app for google-services.json`
+     - `ios/Runner for GoogleService-Info.plist`
+   - Ensure the Firebase project is properly configured by running:
    ```
    flutterfire configure
    ```
@@ -59,11 +59,11 @@ Make sure you have the following installed:
    flutter run
    ```
 ## Usage
--Add new items by entering text and pressing the "Add" button.
--View the list of items fetched from Firestore.
--Edit an item by clicking on it and making changes.
--Delete an item by swiping it to the left.
+- Add new items by entering text and pressing the "Add" button.
+- View the list of items fetched from Firestore.
+- Edit an item by clicking on it and making changes.
+- Delete an item by swiping it to the left.
 
 ## Built With
--Flutter - The UI toolkit for building natively compiled applications.
--Firebase Firestore - The database used for storing and syncing data.
+- Flutter - The UI toolkit for building natively compiled applications.
+- Firebase Firestore - The database used for storing and syncing data.
