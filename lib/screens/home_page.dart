@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:simple_crud/services/authentication.dart';
 import 'package:simple_crud/services/firestore.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,11 +15,16 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController nameTextController = TextEditingController();
   final TextEditingController descTextController = TextEditingController();
 
+  // User credentials
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+
   // Search text field controller
   final TextEditingController searchController = TextEditingController();
 
   // Firestore service
   final FirestoreService firestoreService = FirestoreService();
+
+  User? get currentUser => FirebaseAuth.instance.currentUser;
 
   // open dialog box to add notes
   void _openNoteBox() {
@@ -173,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                     padding: EdgeInsets.only(left: 10, right: 1),
                     child: Icon(Icons.search),
                   ),
-                  border : InputBorder.none),
+                  border: InputBorder.none),
             ),
           ),
           centerTitle: true,
@@ -273,7 +280,17 @@ class _HomePageState extends State<HomePage> {
             icon: const Icon(Icons.sunny),
           ),
           title: const Text('Dark Mode'),
-        )
+        ),
+        const Spacer(
+          flex: 1,
+        ),
+        ListTile(
+          leading: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.logout),
+          ),
+          title: Text(currentUser != null ? 'Login' : 'Logout'),
+        ),
       ],
     );
   }

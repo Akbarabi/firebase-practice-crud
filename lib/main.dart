@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:simple_crud/screens/home_page.dart';
+import 'package:simple_crud/screens/signup_page.dart';
 import 'package:simple_crud/screens/splash_screen.dart';
 import 'firebase_options.dart';
 
