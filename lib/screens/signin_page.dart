@@ -10,7 +10,7 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-   // Form key
+  // Form key
   final _formKey = GlobalKey<FormState>();
 
   // Text field controller
@@ -102,7 +102,9 @@ class _SignInPageState extends State<SignInPage> {
                                   builder: (context) => const HomePage()));
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(e.toString())),
+                            const SnackBar(
+                                content: Text(
+                                    'Your email or password is wrong, or you don\'t have an account')),
                           );
                         }
                       }

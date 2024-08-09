@@ -51,4 +51,8 @@ class FirestoreService {
   }
 
   // ** Search : Search note **
+  Stream<QuerySnapshot> searchNotes(String name) {
+    return notes
+    .where('note', isGreaterThanOrEqualTo: name).snapshots();
+  }
 }

@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_crud/services/authentication.dart';
+import 'package:simple_crud/screens/signin_page.dart';
 import 'package:simple_crud/services/firestore.dart';
+import 'package:flutter/gestures.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,16 +17,40 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController nameTextController = TextEditingController();
   final TextEditingController descTextController = TextEditingController();
 
-  // User credentials
-  String uid = FirebaseAuth.instance.currentUser!.uid;
-
-  // Search text field controller
+  // Search controller
   final TextEditingController searchController = TextEditingController();
+  List<QueryDocumentSnapshot> searchResult = [];
 
   // Firestore service
   final FirestoreService firestoreService = FirestoreService();
 
-  User? get currentUser => FirebaseAuth.instance.currentUser;
+  @override
+  void initState() {
+    super.initState();
+    searchController.addListener(_searchNotes);
+  }
+
+  @override
+  void dispose() {
+    searchController.removeListener(_searchNotes);
+    searchController.dispose();
+    super.dispose();
+  }
+
+  void _searchNotes() {
+    String query = searchController.text.toLowerCase();
+    setState(() {
+      if (query.isEmpty) {
+        searchResult = [];
+      } else {
+        firestoreService.searchNotes(query).listen((snapshot) {
+          setState(() {
+            searchResult = snapshot.docs;
+          });
+        });
+      }
+    });
+  }
 
   // open dialog box to add notes
   void _openNoteBox() {
@@ -163,7 +189,52 @@ class _HomePageState extends State<HomePage> {
             ));
   }
 
-  // Search notes
+  // Get user credential
+  bool _checkUserCredential() {
+    User? user = FirebaseAuth.instance.currentUser;
+    return user != null;
+  }
+
+  // Boolean Text 'Login' or 'Logout'
+  Widget _getText() {
+    return RichText(
+      text: TextSpan(children: <TextSpan>[
+        TextSpan(
+            text: _checkUserCredential() ? 'Logout' : 'Login',
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                if (_checkUserCredential()) {
+                  // Implement logout logic
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignInPage()));
+                }
+              })
+      ]),
+    );
+  }
+
+  // Boolean Icon 'Login' or 'Logout'
+  Widget _getLoginIcon() {
+    return _checkUserCredential()
+        ? IconButton(
+            onPressed: () {
+              // Implementasi logout di sini
+            },
+            icon: const Icon(Icons.logout),
+            hoverColor: Colors.transparent,
+          )
+        : IconButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const SignInPage()));
+            },
+            icon: const Icon(Icons.login),
+            hoverColor: Colors.transparent,
+          );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,17 +243,7 @@ class _HomePageState extends State<HomePage> {
           child: _buildDrawer(),
         ),
         appBar: AppBar(
-          title: const Card(
-            child: TextField(
-              decoration: InputDecoration(
-                  hintText: 'Search...',
-                  icon: Padding(
-                    padding: EdgeInsets.only(left: 10, right: 1),
-                    child: Icon(Icons.search),
-                  ),
-                  border: InputBorder.none),
-            ),
-          ),
+          title: _searchNotesWidget(),
           centerTitle: true,
           toolbarHeight: 70,
         ),
@@ -195,10 +256,12 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildNoteList() {
     return StreamBuilder(
-        stream: firestoreService.getNotes(),
+        stream: searchResult.isEmpty
+            ? firestoreService.getNotes()
+            : firestoreService.searchNotes(searchController.text),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            List notesList = snapshot.data!.docs;
+            List notesList = searchResult.isEmpty ? snapshot.data!.docs : searchResult;
 
             return ListView.builder(
                 itemCount: notesList.length,
@@ -209,7 +272,6 @@ class _HomePageState extends State<HomePage> {
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
-                          // Adds a box shadow to the container.
                           boxShadow: const [
                             BoxShadow(
                                 color: Colors.black26,
@@ -219,14 +281,14 @@ class _HomePageState extends State<HomePage> {
                           ]),
                       child: ListTile(
                           title: Text(
-                            snapshot.data?.docs[index]['note'],
+                            notesList[index]['note'],
                             style: const TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(snapshot.data?.docs[index]['description']),
+                              Text(notesList[index]['description']),
                             ],
                           ),
                           trailing: Wrap(
@@ -235,16 +297,15 @@ class _HomePageState extends State<HomePage> {
                                 icon: const Icon(Icons.update_rounded),
                                 onPressed: () {
                                   _updateNote(
-                                      snapshot.data!.docs[index].id,
-                                      snapshot.data!.docs[index]['note'],
-                                      snapshot.data!.docs[index]
-                                          ['description']);
+                                      notesList[index].id,
+                                      notesList[index]['note'],
+                                      notesList[index]['description']);
                                 },
                               ),
                               IconButton(
                                 icon: const Icon(Icons.delete_rounded),
                                 onPressed: () {
-                                  _deleteNote(snapshot.data!.docs[index].id);
+                                  _deleteNote(notesList[index].id);
                                 },
                               ),
                             ],
@@ -261,37 +322,88 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildDrawer() {
-    return ListView(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(
-          height: 100,
-          child: DrawerHeader(
-            curve: Curves.easeIn,
-            child: Text('Simple CRUD'),
+        ListView(
+          shrinkWrap: true,
+          children: [
+            const DrawerHeader(
+              curve: Curves.easeIn,
+              child: Text('Simple CRUD'),
+            ),
+            ListTile(
+              leading: IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.home),
+                hoverColor: Colors.transparent,
+              ),
+              title: RichText(
+                  text: TextSpan(children: <TextSpan>[
+                TextSpan(
+                    text: 'Home',
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HomePage()));
+                      }),
+              ])),
+            ),
+            ListTile(
+              leading: IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.sunny),
+                hoverColor: Colors.transparent,
+              ),
+              title: const Text('Dark Mode'),
+            ),
+          ],
+        ),
+        Expanded(
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: ListTile(
+                leading: _getLoginIcon(),
+                title: _getText(),
+              ),
+            ),
           ),
-        ),
-        ListTile(
-          leading: IconButton(onPressed: () {}, icon: const Icon(Icons.home)),
-          title: const Text('Home'),
-        ),
-        ListTile(
-          leading: IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.sunny),
-          ),
-          title: const Text('Dark Mode'),
-        ),
-        const Spacer(
-          flex: 1,
-        ),
-        ListTile(
-          leading: IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.logout),
-          ),
-          title: Text(currentUser != null ? 'Login' : 'Logout'),
         ),
       ],
+    );
+  }
+
+  Widget _searchNotesWidget() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        width: 320,
+        height: 70,
+        child: Row(
+          children: [
+            Card(
+              child: SizedBox(
+                width: 300,
+                child: TextField(
+                  controller: searchController,
+                  decoration: const InputDecoration(
+                      label: Text('Search'),
+                      icon: Padding(
+                        padding: EdgeInsets.only(left: 10, right: 1),
+                        child: Icon(Icons.search),
+                      ),
+                      border: InputBorder.none),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
