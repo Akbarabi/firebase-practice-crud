@@ -83,3 +83,6 @@ Inspiration and code samples from various open-source projects.
 ```
 Feel free to modify or expand upon these sections as needed for your specific project.
 ```
+
+## 09-August-2024
+Finally the project is done after inconsistent coding the project, the performance may be poor
